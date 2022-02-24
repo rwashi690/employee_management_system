@@ -18,8 +18,9 @@
   },
   "homepage": "https://github.com/rwashi690/employee_management_system#readme",
   "dependencies": {
+    "asciiart-logo": "^0.2.6",
+    "console.table": "^0.10.0",
     "inquirer": "^8.2.0",
-    "mysql": "^2.18.1",
-    "sequelize": "^6.16.2"
+    "mysql": "^2.18.1"
   }
 }
