@@ -1,8 +1,7 @@
 // Import the necessary files and modules
 const {prompt}=require("inquirer");
 const logo=require("asciiart-logo");
-const database= require("./db");
-const { DEC8_BIN } = require("mysql/lib/protocol/constants/charsets");
+const db= require("./db");
 require("console.table");
 
 // Call the initalize function
@@ -12,45 +11,47 @@ initialize_App();
 function initialize_App() {
     const appTitle=logo({name:"Employee Management System"}).render();
     console.log(appTitle);
-    createPrompts()
+    createPrompts();
 }
 
 // Function to create the necessary prompts
 function createPrompts(){
     prompt([
     {
-        name: "functionToRun",
         type: "list",
-        message: "select a function (use your arrows)",
+        name: "selection",
+        message: "select a function (using the arrows)",
         choices:[
             {
                 name:"View employees in management system",
-                value:"viewEmployees"
+                value:"view_employees"
             },
             {
                 name:"Hire new or add existing employee to management system",
-                value:"hireEmployee"
+                value:"hire_employee"
             },
             {
                 name: "Fire employee and remove from management system",
-                value:"fireEmployee"
+                value:"fire_employee"
+            },
+            {
+                name: "close application",
+                value:"quit"
             }
         ]}
     ]).then (response => {
-        let selection = response.choices;
-        switch(selection){
-            case "viewEmployees":
-                viewEmployees();
-                break;
-            case "hireEmployee":
-                hireEmployee();
-                break;
-            case "fireEmployee":
-                fireEmployee();
-                break;
-            default:
-                quit();
+        let selection = response.selection;
+        if (selection ==="view_employees"){
+            viewEmployees();
+        } else if (selection==="hire_employee"){
+            hireEmployee()
+        } else if (selection==="fire_employee"){
+            fireEmployee()
         }
+         else {
+            quit();
+        }
+
     })
 }
 
@@ -58,12 +59,19 @@ function createPrompts(){
 function viewEmployees(){
     db.findEmployees().then(([rows])=> {
         let employeelist = rows;
+        console.log("\n")
         console.table(employeelist)
     })
     .then(() => createPrompts());   
 }
 
 function hireEmployee(){
+    prompt([
+        {
+            name:"firstName",
+            message:"What is the first name of the employee"
+        }
+    ])
 
 }
 
@@ -72,7 +80,8 @@ function fireEmployee(){
 }
 
 function quit() {
-    
+    console.log("Application closing!")
+    process.exit();
 }
 
 // function viewEmployeesbyDept(){

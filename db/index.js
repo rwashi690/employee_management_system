@@ -11,7 +11,7 @@ class database {
     findEmployees(){
         // Create a JavaScript query to select the necessary data for
         return this.connection.promise().query(
-            "SELECT employee.id, employee.firstName, employee.lastName, role.title, department.departmentName as department, role.salary, CONCAT(manager.firstName, '', manager.lastName) AS manager FROM employee LEFT JOIN role on employee.positionId=role.id LEFT JOIN department on role.departmentId=department.id LEFT JOIN employee manager on manager.id=employee.managerId;"
+            "SELECT id, firstName, lastName, positionId, managerId FROM employee"
         );
     }
     fireEmployee(employeeID){
@@ -21,7 +21,9 @@ class database {
     }
     hireEmployee(employee){
         return this.connection.promise().query(
-            "INSERT INTO employee SET ?", employee
+            "INSERT INTO employee SET?", employee
         );
     }
 }   
+
+module.exports = new database(connection);
