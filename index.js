@@ -70,13 +70,67 @@ function hireEmployee(){
         {
             name:"firstName",
             message:"What is the first name of the employee"
+        },
+        {
+            name:"lastName",
+            message:"What is the last name of the employee"
         }
-    ])
+    ]) .then (response =>{
+        let first_Name = response.firstName;
+        let last_Name = response.lastName;
+        db.findPositions().then(([rows]) => {
+            let positions=rows;
+            const choosePosition=positions.map(({id, title})=>({
+                name:title, 
+                value:id}));
+            prompt({
+                type:"list",
+                name:"positionID",
+                message:"What is the employee's position",
+                choices:choosePosition
+            }).then(response=>{
+                let position_ID=response.positionID;
+                db.findEmployees().then(([rows])=>{
+                    let employees=rows;
+                    const chooseManager = employees.map(({id, firstName, lastName})=>({name:`${firstName} ${lastName}`, value:id}));
+                    prompt({
+                        type:"list",
+                        name:"manager_ID",
+                        message:"Who is the employee's manager",
+                        choices:chooseManager
+                    }).then(response =>{
+                        let employee={
+                            managerID:response.manager_ID,
+                            positionID:position_ID,
+                            firstName:first_Name,
+                            lastName:last_Name
+                        }
+                        db.hireEmployee(employee);
+                    })
+                    .then(()=>console.log(`Added employee to the employee management system`))
+                    .then(()=>createPrompts())
+                })
+            })
+        })
+    })
 
 }
 
 function fireEmployee(){
-
+    db.findEmployees().then(([rows])=>{
+        let employees=rows;
+        const chooseEmployee = employees.map(({id, firstName, lastName})=>({name:`${firstName} ${lastName}`, value:id}));
+        prompt({
+            type:"list",
+            name:"employee_ID",
+            message:"What employee has been let go",
+            choices:chooseEmployee
+        }).then(response =>{
+            db.fireEmployee(response.employee_ID);
+        })
+        .then(()=>console.log(`fired employee was removed from the employee management system`))
+        .then(()=>createPrompts())
+    })
 }
 
 function quit() {
